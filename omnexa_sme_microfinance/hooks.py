@@ -7,7 +7,18 @@ app_license = "mit"
 
 required_apps = ["omnexa_core"]
 
-after_migrate = ["omnexa_sme_microfinance.workspace.mf_workspace.sync_mf_workspace"]
+add_to_apps_screen = [
+	{
+		"name": "omnexa_sme_microfinance",
+		"logo": "/assets/omnexa_sme_microfinance/logo.png",
+		"title": "MicroCapital",
+		"route": "/app/sme_microfinance",
+		"has_permission": "omnexa_core.omnexa_core.finance_demo.finance_app_permission.has_app_permission",
+	}
+]
+
+
+after_migrate = ["omnexa_sme_microfinance.workspace_enhancer.after_migrate"]
 
 fixtures = [
 	{
