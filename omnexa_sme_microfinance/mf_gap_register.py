@@ -16,6 +16,8 @@ GAP_DEFINITIONS: list[dict] = [
 	{"id": "MF-004", "domain": "portfolio", "title": "Microfinance Case", "wave": 1, "detect": "doctype:Microfinance Case"},
 	{"id": "MF-005", "domain": "digital", "title": "Executive dashboard", "wave": 2, "detect": "page:mf-executive-dashboard"},
 	{"id": "MF-006", "domain": "digital", "title": "Field servicing portal", "wave": 2, "detect": "page:mf-servicing-portal"},
+	{"id": "MF-007", "domain": "portfolio", "title": "Group lending lifecycle engine", "wave": 1, "detect": "module:engine.lifecycle"},
+	{"id": "MF-008", "domain": "operations", "title": "Lifecycle API", "wave": 2, "detect": "api:omnexa_sme_microfinance.api.evaluate_lifecycle"},
 ]
 
 
@@ -38,6 +40,13 @@ def _detect_gap(defn: dict) -> bool:
 		return bool(frappe.db.exists("Page", detect.split(":", 1)[1]))
 	if detect.startswith("report:"):
 		return bool(frappe.db.exists("Report", detect.split(":", 1)[1]))
+	if detect.startswith("api:"):
+		path = detect.split(":", 1)[1]
+		try:
+			frappe.get_attr(path)
+			return True
+		except Exception:
+			return False
 	return False
 
 
@@ -65,6 +74,7 @@ def get_gap_status() -> dict:
 		"gaps_closed": closed,
 		"gaps_total": GAPS_TOTAL,
 		"gaps_open": GAPS_TOTAL - closed,
+		"global_leader_gate": closed >= GAPS_TOTAL,
 		"version": "mf-global-1",
 		"app": APP,
 	}
