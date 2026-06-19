@@ -1,0 +1,9 @@
+{
+	"doctype": "Page",
+	"module": "Omnexa SME Microfinance",
+	"name": "mf-executive-dashboard",
+	"page_name": "mf-executive-dashboard",
+	"title": "Microfinance Executive Dashboard",
+	"standard": "Yes",
+	"roles": [{"role": "System Manager"}, {"role": "Finance Microfinance Officer"}]
+}

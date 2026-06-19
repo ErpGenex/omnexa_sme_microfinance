@@ -1,0 +1,1 @@
+omnexa_sme_microfinance.patches.v1_0.sync_mf_workspace_full

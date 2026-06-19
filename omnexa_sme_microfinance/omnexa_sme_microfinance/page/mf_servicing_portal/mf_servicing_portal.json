@@ -1,0 +1,9 @@
+{
+	"doctype": "Page",
+	"module": "Omnexa SME Microfinance",
+	"name": "mf-servicing-portal",
+	"page_name": "mf-servicing-portal",
+	"title": "Microfinance Field Portal",
+	"standard": "Yes",
+	"roles": [{"role": "System Manager"}, {"role": "Finance Microfinance Officer"}]
+}
