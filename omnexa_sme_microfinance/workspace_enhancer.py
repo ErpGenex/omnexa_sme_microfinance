@@ -27,6 +27,9 @@ def after_migrate() -> None:
 		from omnexa_sme_microfinance.workspace.mf_workspace import sync_mf_workspace
 
 		sync_mf_workspace()
+		from omnexa_sme_microfinance.mf_world_class import sync_mf_world_class
+
+		sync_mf_world_class()
 		frappe.db.commit()
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), f"{_APP}: workspace_enhancer")

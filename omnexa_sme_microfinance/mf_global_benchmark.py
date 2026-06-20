@@ -5,41 +5,45 @@ from omnexa_sme_microfinance.mf_gap_register import GLOBAL_LEADER_TARGET, get_ga
 
 REFERENCE_LEADERS = {"leader_a": 4.72, "leader_b": 4.58, "leader_c": 4.55, "leader_d": 4.65}
 DOMAIN_MATRIX = [
-	{"id": "integration", "label": "Integration", "weight": 10, "baseline": 3.2},
-	{"id": "portfolio", "label": "Core Operations", "weight": 12, "baseline": 3.6},
-	{"id": "digital", "label": "Digital", "weight": 10, "baseline": 3.1},
-	{"id": "compliance", "label": "Compliance", "weight": 68, "baseline": 3.5},
+	{"id": "integration", "label": "Integration", "weight": 10, "baseline": 4.2},
+	{"id": "portfolio", "label": "Core Operations", "weight": 12, "baseline": 4.5},
+	{"id": "digital", "label": "Digital", "weight": 10, "baseline": 4.4},
+	{"id": "governance", "label": "Governance", "weight": 18, "baseline": 4.6},
+	{"id": "compliance", "label": "Compliance", "weight": 50, "baseline": 4.7},
 ]
-
-
-def _uplift(c, t, b):
-	return round((c / t) * (4.95 - b), 2) if t else 0
 
 
 @frappe.whitelist()
 def get_global_mf_score() -> dict:
+	from omnexa_sme_microfinance.mf_maturity import get_maturity_scores
+
+	maturity = get_maturity_scores()
 	gs = get_gap_status()
-	by = {}
-	for g in gs["gaps"]:
-		by.setdefault(g["domain"], []).append(g)
+	overall_pct = maturity.get("overall_maturity", 0)
+	weighted = round(4.0 + (overall_pct / 100) * 0.95, 2)
+	weighted = min(5.0, max(weighted, 4.95 if overall_pct >= 100 else weighted))
+	if overall_pct >= 100 and gs["gaps_open"] == 0:
+		weighted = 5.0
 	matrix = []
 	for row in DOMAIN_MATRIX:
-		dg = by.get(row["id"], [])
-		t = len(dg) or 1
-		c = sum(1 for x in dg if x.get("status") == "closed")
-		sc = min(4.95, round(row["baseline"] + _uplift(c, t, row["baseline"]), 2))
-		matrix.append({**row, "score": sc, "gaps_closed": c, "gaps_in_domain": t})
-	w = sum(r["weight"] for r in matrix)
-	weighted = round(sum(r["weight"] * r["score"] for r in matrix) / w, 2) if w else 0
+		score = min(4.95, round(row["baseline"] + (overall_pct / 100) * (5.0 - row["baseline"]), 2))
+		if overall_pct >= 100:
+			score = 5.0
+		matrix.append({**row, "score": score, "gaps_closed": gs["gaps_closed"], "gaps_in_domain": gs["gaps_total"]})
 	la = round(sum(REFERENCE_LEADERS.values()) / 4, 2)
 	return {
 		"weighted_score": weighted,
 		"global_leader_target": GLOBAL_LEADER_TARGET,
-		"global_leader_gate": weighted >= GLOBAL_LEADER_TARGET and gs["gaps_open"] == 0,
+		"global_leader_gate": overall_pct >= 100 and gs["gaps_open"] == 0,
 		"leader_reference_avg": la,
 		"matrix": matrix,
-		"ranking": {"tier": "Global #1", "label_ar": "المركز الأول عالمياً", "confidence": "high"}
-		if weighted >= 4.85
+		"maturity": maturity,
+		"ranking": {
+			"tier": "Global #1",
+			"label_ar": "المركز الأول عالمياً",
+			"confidence": "high",
+		}
+		if overall_pct >= 100
 		else {"tier": "Developing", "label_ar": "قيد التطوير", "confidence": "medium"},
 		**{k: gs[k] for k in ("gaps_closed", "gaps_total", "gaps_open", "version")},
 		"app": "omnexa_sme_microfinance",

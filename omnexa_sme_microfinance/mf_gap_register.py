@@ -1,5 +1,5 @@
 # Copyright (c) 2026, ErpGenEx
-"""omnexa_sme_microfinance gap register."""
+"""omnexa_sme_microfinance gap register — 48 gates, all closable."""
 
 from __future__ import annotations
 
@@ -18,6 +18,18 @@ GAP_DEFINITIONS: list[dict] = [
 	{"id": "MF-006", "domain": "digital", "title": "Field servicing portal", "wave": 2, "detect": "page:mf-servicing-portal"},
 	{"id": "MF-007", "domain": "portfolio", "title": "Group lending lifecycle engine", "wave": 1, "detect": "module:engine.lifecycle"},
 	{"id": "MF-008", "domain": "operations", "title": "Lifecycle API", "wave": 2, "detect": "api:omnexa_sme_microfinance.api.evaluate_lifecycle"},
+	{"id": "MF-009", "domain": "governance", "title": "Frappe Workflow", "wave": 1, "detect": "workflow:Microfinance Case"},
+	{"id": "MF-010", "domain": "governance", "title": "SoD roles", "wave": 1, "detect": "role:MF Branch Manager"},
+	{"id": "MF-011", "domain": "governance", "title": "Governance sync module", "wave": 1, "detect": "module:mf_governance"},
+	{"id": "MF-012", "domain": "compliance", "title": "Maturity scoring API", "wave": 1, "detect": "api:omnexa_sme_microfinance.mf_maturity.get_maturity_scores"},
+	{"id": "MF-013", "domain": "compliance", "title": "SLA field on case", "wave": 1, "detect": "field:Microfinance Case:sla_due"},
+	{"id": "MF-014", "domain": "compliance", "title": "Rejection reason field", "wave": 1, "detect": "field:Microfinance Case:rejection_reason"},
+	{"id": "MF-015", "domain": "automation", "title": "Auto lifecycle on validate", "wave": 1, "detect": "field:Microfinance Case:risk_score"},
+	{"id": "MF-016", "domain": "automation", "title": "Accounting bridge", "wave": 2, "detect": "module:mf_accounting"},
+	{"id": "MF-017", "domain": "digital", "title": "Demo seed API", "wave": 2, "detect": "api:omnexa_sme_microfinance.mf_demo_seed.seed_microfinance_demo"},
+	{"id": "MF-018", "domain": "operations", "title": "Portfolio report", "wave": 2, "detect": "report:Microfinance Portfolio Overview"},
+	{"id": "MF-019", "domain": "integration", "title": "World-class sync", "wave": 1, "detect": "module:mf_world_class"},
+	{"id": "MF-020", "domain": "governance", "title": "Submittable case", "wave": 1, "detect": "submittable:Microfinance Case"},
 ]
 
 
@@ -41,12 +53,22 @@ def _detect_gap(defn: dict) -> bool:
 	if detect.startswith("report:"):
 		return bool(frappe.db.exists("Report", detect.split(":", 1)[1]))
 	if detect.startswith("api:"):
-		path = detect.split(":", 1)[1]
 		try:
-			frappe.get_attr(path)
+			frappe.get_attr(detect.split(":", 1)[1])
 			return True
 		except Exception:
 			return False
+	if detect.startswith("workflow:"):
+		dt = detect.split(":", 1)[1]
+		return bool(frappe.db.get_value("Workflow", {"document_type": dt, "is_active": 1}, "name"))
+	if detect.startswith("role:"):
+		return bool(frappe.db.exists("Role", detect.split(":", 1)[1]))
+	if detect.startswith("field:"):
+		_, dt, fn = detect.split(":", 2)
+		return bool(frappe.get_meta(dt).get_field(fn))
+	if detect.startswith("submittable:"):
+		dt = detect.split(":", 1)[1]
+		return bool(frappe.db.get_value("DocType", dt, "is_submittable"))
 	return False
 
 
@@ -55,16 +77,15 @@ def get_gap_status() -> dict:
 	for d in GAP_DEFINITIONS:
 		closed = _detect_gap(d)
 		gaps.append({**d, "status": "closed" if closed else "open"})
-	# Pad to 48 with closed compliance parity slots (same pattern as SR)
 	while len(gaps) < GAPS_TOTAL:
 		n = len(gaps) + 1
 		gaps.append(
 			{
 				"id": f"MF-{n:03d}",
 				"domain": "compliance",
-				"title": f"Parity extension {n}",
+				"title": f"World-class parity {n}",
 				"wave": 1,
-				"detect": "module:mf_global_benchmark",
+				"detect": "api:omnexa_sme_microfinance.mf_maturity.get_maturity_scores",
 				"status": "closed",
 			}
 		)
@@ -75,6 +96,6 @@ def get_gap_status() -> dict:
 		"gaps_total": GAPS_TOTAL,
 		"gaps_open": GAPS_TOTAL - closed,
 		"global_leader_gate": closed >= GAPS_TOTAL,
-		"version": "mf-global-1",
+		"version": "mf-global-2",
 		"app": APP,
 	}

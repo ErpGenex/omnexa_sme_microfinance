@@ -7,6 +7,12 @@ app_license = "mit"
 
 required_apps = ["omnexa_core"]
 
+doc_events = {
+	"Microfinance Case": {
+		"before_workflow_action": "omnexa_sme_microfinance.omnexa_sme_microfinance.doctype.microfinance_case.microfinance_case.before_workflow_action",
+	},
+}
+
 add_to_apps_screen = [
 	{
 		"name": "omnexa_sme_microfinance",

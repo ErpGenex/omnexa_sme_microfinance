@@ -28,6 +28,7 @@ WORKSPACE_SECTIONS: list[tuple[str, list[tuple[str, str, str]]]] = [
 		"🤝 Micro portfolio",
 		[
 			("DocType", "Microfinance Case", "Micro Case"),
+			("Report", "Microfinance Portfolio Overview", "Portfolio Report"),
 		],
 	),
 	(
