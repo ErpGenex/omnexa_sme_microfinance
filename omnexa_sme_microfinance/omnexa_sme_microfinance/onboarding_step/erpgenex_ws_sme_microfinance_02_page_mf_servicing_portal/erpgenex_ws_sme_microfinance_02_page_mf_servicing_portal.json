@@ -1,0 +1,23 @@
+{
+ "action": "Go to Page",
+ "action_label": "Open",
+ "callback_message": "Use the journey sidebar and work scenarios on this page, then click Continue.",
+ "callback_title": "Field Portal",
+ "creation": "2026-06-20 00:25:47.936193",
+ "description": "Jump to the **Field Portal** page.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2026-07-11 11:11:29.240577",
+ "modified_by": "Administrator",
+ "name": "ERPGENEX-WS-sme_microfinance-02-page-mf_servicing_portal",
+ "owner": "Administrator",
+ "path": "mf-servicing-portal",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Open Field Portal",
+ "validate_action": 1
+}
