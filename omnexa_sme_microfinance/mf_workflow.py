@@ -11,7 +11,8 @@ WORKFLOW_NAME = "MicroCapital Group Lending"
 def _ensure_workflow_state(state: str, style: str = "Primary") -> None:
 	if frappe.db.exists("Workflow State", state):
 		return
-	frappe.get_doc({"doctype": "Workflow State", "workflow_state_name": state, "style": style}).insert(
+	frappe.get_doc({"doctype": "Workflow State", "workflow_state_name": state, "style": style
+	}).insert(
 		ignore_permissions=True
 	)
 
@@ -19,14 +20,16 @@ def _ensure_workflow_state(state: str, style: str = "Primary") -> None:
 def _ensure_workflow_action(action: str) -> None:
 	if frappe.db.exists("Workflow Action Master", action):
 		return
-	frappe.get_doc({"doctype": "Workflow Action Master", "workflow_action_name": action}).insert(
+	frappe.get_doc({"doctype": "Workflow Action Master", "workflow_action_name": action
+	}).insert(
 		ignore_permissions=True
 	)
 
 
 def _state(state, doc_status, *, allow_edit="All", update_field=None, update_value=None, style="Primary"):
 	_ensure_workflow_state(state, style)
-	row = {"state": state, "doc_status": str(doc_status), "style": style, "allow_edit": allow_edit}
+	row = {"state": state, "doc_status": str(doc_status), "style": style, "allow_edit": allow_edit
+	}
 	if update_field:
 		row["update_field"] = update_field
 		row["update_value"] = update_value
@@ -40,7 +43,7 @@ def _transition(state, action, next_state, allowed, *, self_approval=0):
 		"action": action,
 		"next_state": next_state,
 		"allowed": allowed,
-		"allow_self_approval": self_approval,
+		"allow_self_approval": self_approval
 	}
 
 

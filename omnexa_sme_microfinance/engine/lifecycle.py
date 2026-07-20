@@ -34,8 +34,8 @@ class MicrofinanceLifecycleResult:
 			"group_limit": str(self.group_limit),
 			"collection_priority": self.collection_priority,
 			"reason_codes": self.reason_codes,
-			"required_controls": self.required_controls,
-		}
+			"required_controls": self.required_controls
+	}
 
 
 def evaluate_microfinance_lifecycle(c: MicrofinanceCaseInput) -> MicrofinanceLifecycleResult:

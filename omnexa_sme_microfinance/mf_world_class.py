@@ -10,7 +10,8 @@ def sync_mf_world_class() -> dict:
 	from omnexa_sme_microfinance.mf_governance import sync_mf_governance
 	from omnexa_sme_microfinance.mf_report import ensure_microfinance_portfolio_report
 
-	out = {"governance": sync_mf_governance(), "report": ensure_microfinance_portfolio_report()}
+	out = {"governance": sync_mf_governance(), "report": ensure_microfinance_portfolio_report()
+	}
 	try:
 		from omnexa_sme_microfinance.mf_maturity import get_maturity_scores
 

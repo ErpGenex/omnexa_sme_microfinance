@@ -7,20 +7,31 @@ import frappe
 from frappe import _
 
 MF_ROLES: list[dict] = [
-	{"role": "MF Field Officer", "desk_access": 1},
-	{"role": "MF Branch Manager", "desk_access": 1},
-	{"role": "MF Disbursement Officer", "desk_access": 1},
-	{"role": "MF Collection Officer", "desk_access": 1},
-	{"role": "MF Risk Analyst", "desk_access": 1},
+	{"role": "MF Field Officer", "desk_access": 1
+	},
+	{"role": "MF Branch Manager", "desk_access": 1
+	},
+	{"role": "MF Disbursement Officer", "desk_access": 1
+	},
+	{"role": "MF Collection Officer", "desk_access": 1
+	},
+	{"role": "MF Risk Analyst", "desk_access": 1
+	},
 ]
 
 ROLE_PERMISSIONS: list[dict] = [
-	{"role": "MF Field Officer", "create": 1, "read": 1, "write": 1, "delete": 0, "submit": 0},
-	{"role": "MF Branch Manager", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 1},
-	{"role": "MF Disbursement Officer", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 1},
-	{"role": "MF Collection Officer", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 0},
-	{"role": "MF Risk Analyst", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 0},
-	{"role": "Finance Microfinance Officer", "create": 1, "read": 1, "write": 1, "delete": 0, "submit": 1},
+	{"role": "MF Field Officer", "create": 1, "read": 1, "write": 1, "delete": 0, "submit": 0
+	},
+	{"role": "MF Branch Manager", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 1
+	},
+	{"role": "MF Disbursement Officer", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 1
+	},
+	{"role": "MF Collection Officer", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 0
+	},
+	{"role": "MF Risk Analyst", "create": 0, "read": 1, "write": 1, "delete": 0, "submit": 0
+	},
+	{"role": "Finance Microfinance Officer", "create": 1, "read": 1, "write": 1, "delete": 0, "submit": 1
+	},
 ]
 
 
@@ -29,7 +40,8 @@ def ensure_mf_roles() -> list[str]:
 	for spec in MF_ROLES:
 		name = spec["role"]
 		if not frappe.db.exists("Role", name):
-			frappe.get_doc({"doctype": "Role", "role_name": name, "desk_access": spec["desk_access"]}).insert(
+			frappe.get_doc({"doctype": "Role", "role_name": name, "desk_access": spec["desk_access"]
+	}).insert(
 				ignore_permissions=True
 			)
 			created.append(name)
@@ -51,7 +63,7 @@ def _perm_row(role: str, p: dict) -> dict:
 		"export": 1,
 		"print": 1,
 		"email": 1,
-		"share": 1,
+		"share": 1
 	}
 	return row
 
@@ -89,4 +101,5 @@ def sync_mf_governance() -> dict:
 	from omnexa_core.omnexa_core.finance_demo.finance_vertical_bpe import sync_vertical_bpe
 
 	out = sync_vertical_bpe("omnexa_sme_microfinance")
-	return {"roles_created": roles, "workflow": out.get("workflow"), "stage_gate": True}
+	return {"roles_created": roles, "workflow": out.get("workflow"), "stage_gate": True
+	}

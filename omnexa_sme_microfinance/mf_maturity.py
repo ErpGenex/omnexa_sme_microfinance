@@ -60,7 +60,8 @@ MATURITY_DIMENSIONS: list[tuple[str, list[tuple[str, object]]]] = [
 
 
 def _active_workflow() -> bool:
-	return bool(frappe.db.get_value("Workflow", {"document_type": "Microfinance Case", "is_active": 1}, "name"))
+	return bool(frappe.db.get_value("Workflow", {"document_type": "Microfinance Case", "is_active": 1
+	}, "name"))
 
 
 def _import_engine() -> bool:
@@ -121,7 +122,8 @@ def _score_gates(gates: list[tuple[str, object]]) -> tuple[int, list[dict]]:
 			ok = False
 		if ok:
 			passed += 1
-		results.append({"gate": gate_id, "passed": ok})
+		results.append({"gate": gate_id, "passed": ok
+	})
 	score = int(round(100 * passed / len(gates))) if gates else 0
 	return score, results
 
@@ -131,7 +133,8 @@ def get_maturity_scores() -> dict:
 	dimensions: dict[str, dict] = {}
 	for dim_key, gates in MATURITY_DIMENSIONS:
 		score, detail = _score_gates(gates)
-		dimensions[dim_key] = {"score": score, "gates": detail}
+		dimensions[dim_key] = {"score": score, "gates": detail
+	}
 
 	overall = int(round(sum(d["score"] for d in dimensions.values()) / len(dimensions)))
 	return {
@@ -144,5 +147,5 @@ def get_maturity_scores() -> dict:
 		"dimensions": dimensions,
 		"target": 100,
 		"app": "omnexa_sme_microfinance",
-		"marketing_name": "MicroCapital",
+		"marketing_name": "MicroCapital"
 	}

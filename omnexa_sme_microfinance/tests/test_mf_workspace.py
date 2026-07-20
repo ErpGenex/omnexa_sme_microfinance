@@ -11,7 +11,8 @@ class TestMicrofinanceWorkspace(unittest.TestCase):
 		sync_mf_workspace()
 		frappe.db.commit()
 		links = frappe.db.count(
-			"Workspace Link", {"parent": "SME Microfinance", "parenttype": "Workspace"}
+			"Workspace Link", {"parent": "SME Microfinance", "parenttype": "Workspace"
+	}
 		)
 		self.assertGreaterEqual(links, 25, f"SME Microfinance workspace links={links}")
 
